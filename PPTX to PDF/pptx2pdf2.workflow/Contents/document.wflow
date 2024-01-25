@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>AMApplicationBuild</key>
+	<string>523</string>
+	<key>AMApplicationVersion</key>
+	<string>2.10</string>
+	<key>AMDocumentVersion</key>
+	<string>2</string>
+	<key>actions</key>
+	<array>
+		<dict>
+			<key>action</key>
+			<dict>
+				<key>AMAccepts</key>
+				<dict>
+					<key>Container</key>
+					<string>List</string>
+					<key>Optional</key>
+					<true/>
+					<key>Types</key>
+					<array>
+						<string>com.apple.applescript.object</string>
+					</array>
+				</dict>
+				<key>AMActionVersion</key>
+				<string>1.0.2</string>
+				<key>AMApplication</key>
+				<array>
+					<string>Automator</string>
+				</array>
+				<key>AMParameterProperties</key>
+				<dict>
+					<key>source</key>
+					<dict/>
+				</dict>
+				<key>AMProvides</key>
+				<dict>
+					<key>Container</key>
+					<string>List</string>
+					<key>Types</key>
+					<array>
+						<string>com.apple.applescript.object</string>
+					</array>
+				</dict>
+				<key>ActionBundlePath</key>
+				<string>/System/Library/Automator/Run AppleScript.action</string>
+				<key>ActionName</key>
+				<string>Run AppleScript</string>
+				<key>ActionParameters</key>
+				<dict>
+					<key>source</key>
+					<string># credits:# https://stackoverflow.com/questions/41886380/using-applescript-to-open-ms-powerpoint-2016-file# https://superuser.com/questions/670893/get-path-of-parent-folder-of-script-location-applescripton savePowerPointAsPDF(documentPath, pdfPath)	set inFile to documentPath as alias # this line must be outside of the 'tell application "Microsoft PowerPoint"' block  to avoid issues with the open command		tell application "Microsoft PowerPoint"				launch # open powerpoint		open inFile # opens file				# create empty file to avoid issues with save command		set pdfPath to my createEmptyFile(pdfPath) # the handler return a file object (this line must be inside of the 'tell application "Microsoft PowerPoint"' block to avoid issues with the saving command)				# sometimes necesarry to avoid a failure		delay 1				# saves given ppt(x) as pdf		save active presentation in pdfPath as save as PDF			end tell	end savePowerPointAsPDFon createEmptyFile(eFile)		# create file (this will do nothing if the file exists)	do shell script "touch " &amp; quoted form of POSIX path of eFile		# sometimes necesarry to avoid a failure	delay 1		# returns empty file	return (POSIX path of eFile) as POSIX file	end createEmptyFile# gets output path from input path (replace extension with .pdf and return as string)on getOutputPath(docPath)		# casts to string, just in case	set dpath to docPath as string		if dpath ends with ".pptx" then		# replace pptx		return (text 1 thru -6 of dpath) &amp; "-pptx.pdf"	else		# replace ppt		return (text 1 thru -5 of dpath) &amp; "-ppt.pdf"	end ifend getOutputPath# retrive parent directory of given filepathon getParentDirectory(filePath)		tell application "Finder"				# retrives parent directory of given filepath		set parentDirectory to POSIX path of ((filePath as text) &amp; "::")				# debug: show alert with parent directory		-- set theDialogText to "parent folder: [" &amp; (parentDirectory) &amp; "]" 		-- display dialog theDialogText			end tell		return parentDirectory	end getParentDirectoryon movePowerPointFilesToSubfolder(sourceFolder, fileToMove, subFolderName)	tell application "Finder"				# convert the POSIX path of the source folder to an alias for Finder operations		set sourceFolderPath to POSIX file sourceFolder as alias				# concatenate the source folder's path with the subfolder name to create the full path of the subfolder		set subFolderFullPath to sourceFolderPath &amp; subFolderName as string				# check if the subfolder exists, create it if not		if not (exists folder subFolderFullPath) then			make new folder at sourceFolderPath with properties {name:subFolderName}		end if				# Move file to the subfolder		move fileToMove to subFolderFullPath			end tellend movePowerPointFilesToSubfolder# this "run" loop defines what happens when triggered from quick actionson run {input, parameters}		repeat with i in input		set inPath to i as string				# debug: display input path		-- set theDialogText to "input: [" &amp; inPath &amp; "]"		-- display dialog theDialogText				# calculate output path for current file		set outPath to getOutputPath(inPath)				# gets parent directory of current file (kinda redundant but it works)		set parentDir to getParentDirectory(i)				# save converted PDF in original directory		savePowerPointAsPDF(inPath, outPath)				# move powerpoint files into subfolder		movePowerPointFilesToSubfolder(parentDir, inPath, "powerpoint files")			end repeat		# quit powerpoint	tell application "Microsoft PowerPoint"		quit	end tell	end run</string>
+				</dict>
+				<key>BundleIdentifier</key>
+				<string>com.apple.Automator.RunScript</string>
+				<key>CFBundleVersion</key>
+				<string>1.0.2</string>
+				<key>CanShowSelectedItemsWhenRun</key>
+				<false/>
+				<key>CanShowWhenRun</key>
+				<true/>
+				<key>Category</key>
+				<array>
+					<string>AMCategoryUtilities</string>
+				</array>
+				<key>Class Name</key>
+				<string>RunScriptAction</string>
+				<key>InputUUID</key>
+				<string>3C284BEA-321B-4B76-9705-2541397EC565</string>
+				<key>Keywords</key>
+				<array>
+					<string>Run</string>
+				</array>
+				<key>OutputUUID</key>
+				<string>08A7E153-CB9D-4CEC-8214-4F969052AA4F</string>
+				<key>UUID</key>
+				<string>03FBA360-CB27-42EC-AB70-D86FAB7846BE</string>
+				<key>UnlocalizedApplications</key>
+				<array>
+					<string>Automator</string>
+				</array>
+				<key>arguments</key>
+				<dict>
+					<key>0</key>
+					<dict>
+						<key>default value</key>
+						<string>on run {input, parameters}
+	
+	(* Your script goes here *)
+	
+	return input
+end run</string>
+						<key>name</key>
+						<string>source</string>
+						<key>required</key>
+						<string>0</string>
+						<key>type</key>
+						<string>0</string>
+						<key>uuid</key>
+						<string>0</string>
+					</dict>
+				</dict>
+				<key>isViewVisible</key>
+				<integer>1</integer>
+				<key>location</key>
+				<string>664.000000:657.000000</string>
+				<key>nibPath</key>
+				<string>/System/Library/Automator/Run AppleScript.action/Contents/Resources/Base.lproj/main.nib</string>
+			</dict>
+			<key>isViewVisible</key>
+			<integer>1</integer>
+		</dict>
+	</array>
+	<key>connectors</key>
+	<dict/>
+	<key>workflowMetaData</key>
+	<dict>
+		<key>applicationBundleID</key>
+		<string>com.apple.finder</string>
+		<key>applicationBundleIDsByPath</key>
+		<dict>
+			<key>/System/Library/CoreServices/Finder.app</key>
+			<string>com.apple.finder</string>
+		</dict>
+		<key>applicationPath</key>
+		<string>/System/Library/CoreServices/Finder.app</string>
+		<key>applicationPaths</key>
+		<array>
+			<string>/System/Library/CoreServices/Finder.app</string>
+		</array>
+		<key>inputTypeIdentifier</key>
+		<string>com.apple.Automator.fileSystemObject</string>
+		<key>outputTypeIdentifier</key>
+		<string>com.apple.Automator.nothing</string>
+		<key>presentationMode</key>
+		<integer>15</integer>
+		<key>processesInput</key>
+		<false/>
+		<key>serviceApplicationBundleID</key>
+		<string>com.apple.finder</string>
+		<key>serviceApplicationPath</key>
+		<string>/System/Library/CoreServices/Finder.app</string>
+		<key>serviceInputTypeIdentifier</key>
+		<string>com.apple.Automator.fileSystemObject</string>
+		<key>serviceOutputTypeIdentifier</key>
+		<string>com.apple.Automator.nothing</string>
+		<key>serviceProcessesInput</key>
+		<false/>
+		<key>systemImageName</key>
+		<string>NSActionTemplate</string>
+		<key>useAutomaticInputType</key>
+		<false/>
+		<key>workflowTypeIdentifier</key>
+		<string>com.apple.Automator.servicesMenu</string>
+	</dict>
+</dict>
+</plist>
